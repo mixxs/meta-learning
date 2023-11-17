@@ -1,0 +1,29 @@
+task:
+# 模型生成部分
+classifier: BiSiamese # 分类器名称[LeNet,BiSiamese,TriSiamese]
+get_feature: LeNet # 特征提取器的名称[LeNet]
+get_feature_pretrained: True # 是否要加载预训练的特征提取器参数
+get_feature_path: ./runs/LeNet_CrossEntropyLoss/run0/best_LeNet_CrossEntropyLoss.pt # 如果要加载特征提取器的预训练参数，则需要填写参数文件的路径
+Siamese_path: #如果要继续上一次的权重训练，则需要填写权重所在路径
+freeze_param:  # 需要冻结的参数列表[get_feature,Siamese]，如果是Siamese，则只会冻结除了get_feature外的参数，并不冻结整个网络
+
+# 生成数据集的部分
+dataset_path: ..\dataset # 文件夹根目录
+dataset_type: BiDataset # 数据集的类型 [BaseDataset,BiDataset,TripletDataset]，按次序分别一次 弹出一张图像、两张图像、三张图像
+train_set_class: [0,1,2,3,4,5] # 训练集中的类别
+support_set_class: [6,7,8,9] # 支持集中的类别
+train_or_support: train # 要获取training set还是support set  [train,support]
+train_num: 0.8 # 用来训练的数据量，如果是小数（<1），则表示训练集占比(用于training set)，如果是整数，则表示每个标签的训练数据量(support set)
+
+# 生成dataLoader的参数部分
+batch_size: 40  # 每个batch中数据的数量
+workers: 8  # 加载数据时的线程数
+shuffle: True # 是否要打乱[True,False]
+skip_last: False # 跳过最后一个batch [True,False]
+
+# 训练使用的参数部分
+epochs: 10  # 迭代次数
+device: cuda # 使用的设备，[cuda,cpu]
+lr: 0.001 # 学习率
+optimizer: Adam  # 使用的优化器（pytorch优化器名称）[RMSProp,Adam,SGD]
+loss:  CrossEntropyLoss # 使用的loss类（输入pytorch的nn.Loss的类名）[MSELoss,CrossEntropyLoss,BCELoss,TripletMarginLoss,ContrastiveLoss]
